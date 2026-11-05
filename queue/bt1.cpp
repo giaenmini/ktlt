@@ -32,7 +32,7 @@ class StudentQueue{
 		}
 	void enqueue(const Student& s) {
         if (isFull()) {
-            cout << "[!] Hang doi da day. Khong thê them!\n";
+            cout << "[!] Hang doi da day. Khong thÃª them!\n";
             return;
         }
         data[size] = s;
