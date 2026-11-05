@@ -3,89 +3,85 @@
 
 using namespace std;
 
-struct Student{
-	string id;
-	string name;
-	
-	void inthongtin() const{
-		cout << "MSSV: "<< id << " | Ho ten: "<<name<< endl;
-	}
+#define MAX 100
+
+struct Student {
+    string id;
+    string name;
+
+    void inthongtin() const {
+        cout << "MSSV: " << id << " | Ho ten: " << name << endl;
+    }
 };
 
-class StudentQueue{
-	private:
-		Student*data;
-		int capacity;
-		int size;
-	public:
-		StudentQueue(int cap = 100) : capacity(cap) , size(0){
-			data = new Student[capacity];
-		} 
-		~StudentQueue(){
-			delete[] data;
-		}
-		bool isFull() const{
-			return size == capacity;
-		}
-		bool isEmpty() const{
-	        return size == 0;	
-		}
-	void enqueue(const Student& s) {
-        if (isFull()) {
-            cout << "[!] Hang doi da day. Khong thê them!\n";
-            return;
-        }
-        data[size] = s;
-        size++;
-        cout << "[+] Da them sinh vien: " << s.name << " (" << s.id << ") vao hang doi.\n";
-    }
-    void dequeue() {
-        if (isEmpty()) {
-            cout << "[!] Hang doi rong. Khong co sinh vien de phuc vu!\n";
-            return;
-        }
-        cout << "[-] Da phuc vu xong sinh vien: " << data[0].name << " (" << data[0].id << ")\n";
-
-        for (int i = 0; i < size - 1; ++i) {
-            data[i] = data[i + 1];
-        }
-        size--;
-    }
-    void front() const {
-        if (isEmpty()) {
-            cout << "[!] Hang doi rong.\n";
-            return;
-        }
-        cout << "[*] Sinh vien dang cho o dau hang: ";
-        data[0].inthongtin();
-    }
-    void display() const {
-        if (isEmpty()) {
-            cout << "[!] Hang doi hien dang rong!\n";
-            return;
-        }
-        cout << "\n=== DANH SACH SINH VIEN DANG CHO (" << size << " sinh vien) ===\n";
-        for (int i = 0; i < size; ++i) {
-            cout << i + 1 << ". ";
-            data[i].inthongtin();
-        }
-        cout << "========================================================\n\n";
-    }
+struct Queue {
+    Student a[MAX];
+    int front, rear;
 };
+
+void init(Queue& q) {
+    q.front = 0;
+    q.rear = -1;
+}
+
+bool isEmpty(Queue q) {
+    return q.front > q.rear;
+}
+
+bool isFull(Queue q) {
+    return q.rear == MAX - 1;
+}
+
+void enqueue(Queue& q, Student x) {
+    if (isFull(q)) return;
+    q.a[++q.rear] = x;
+}
+
+Student dequeue(Queue& q) {
+    if (isEmpty(q)) {
+        return {"", ""};
+    }
+    return q.a[q.front++];
+}
+
+Student front(Queue q) {
+    if (isEmpty(q)) {
+        return {"", ""};
+    }
+    return q.a[q.front];
+}
+
+void display(Queue q) {
+    if (isEmpty(q)) {
+        cout << "Hang doi rong!\n";
+        return;
+    }
+    cout << "\n--- DANH SACH SINH VIEN TRONG HANG DOI ---\n";
+    for (int i = q.front; i <= q.rear; i++) {
+        q.a[i].inthongtin();
+    }
+}
+
 int main() {
-    StudentQueue q(5);
+    Queue q;
+    init(q);
 
-    q.enqueue({"SV001", "Nguyen Van A"});
-    q.enqueue({"SV002", "Tran Thi B"});
-    q.enqueue({"SV003", "Le Van C"});
+    enqueue(q, {"SV01", "Pham Hoang Nam"});
+    enqueue(q, {"SV02", "Do Mai Phuong"});
+    enqueue(q, {"SV03", "Bui Hai Dang"});
 
-    q.display();
+    display(q);
 
-    q.front();
+    cout << "\n[Xem sinh vien dau hang - Front]\n";
+    Student stFront = front(q);
+    stFront.inthongtin();
 
-    q.dequeue();
+    cout << "\n[Phuc vu sinh vien dau tien - Dequeue]\n";
+    Student stServed = dequeue(q);
+    cout << "Da xu ly xong ho so cho: ";
+    stServed.inthongtin();
 
-    q.display();
+    display(q);
 
     return 0;
 }
